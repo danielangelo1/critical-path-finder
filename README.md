@@ -1,8 +1,8 @@
-# CriticalPathAnalyzer
+# Critical Path Finder
 
 ## Description
 
-CriticalPathAnalyzer is a Python-based tool designed to automate the identification of critical paths in project schedules. Utilizing a graph representation of tasks, durations, and dependencies, this application implements the Bellman-Ford algorithm to efficiently determine the maximum time required to complete a project.
+Critical Path Finder is a Python-based tool designed to automate the identification of critical paths in project schedules. Utilizing a graph representation of tasks, durations, and dependencies, this application implements the Bellman-Ford algorithm to efficiently determine the maximum time required to complete a project.
 
 ## Features
 
