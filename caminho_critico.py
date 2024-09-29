@@ -1,44 +1,56 @@
-def encontrar_caminho_critico_bellman_ford(grafo, duracoes, tarefas):
+def encontrar_caminho_critico_bellman_ford(grafo, duracoes, materias):
     """
     Encontra o caminho crítico utilizando o algoritmo de Bellman-Ford.
 
-    :param grafo: O grafo de tarefas.
-    :param duracoes: Durações de cada tarefa.
-    :param tarefas: Lista de todas as tarefas.
-    :return: Caminho crítico e o tempo mínimo.
+    :param grafo: O grafo de materias, onde cada chave é uma matéria e o valor é uma lista de matérias que dependem dela.
+    :param duracoes: Dicionário com a duração de cada materia.
+    :param materias: Lista de todas as materias.
+    :return: Caminho crítico (lista de matérias) e o tempo mínimo para completar o projeto.
     """
-    # Inicializa distâncias e predecessores
-    distancias = {tarefa: float('-inf') for tarefa in tarefas}  # Usar -infinito para caminhos máximos
-    predecessores = {tarefa: None for tarefa in tarefas}
 
-    # Define a distância inicial (s) como 0
+    # Inicializa distâncias e predecessores
+    distancias = {materia: float('-inf') for materia in materias}  # Distância máxima até cada matéria (inicialmente -infinito)
+    predecessores = {materia: None for materia in materias}  # Predecessor de cada matéria no caminho crítico
+
+    # Define a distância inicial (s) como 0 (representando o início do projeto)
     distancias['s'] = 0
 
-    # Atualiza as distâncias para cada tarefa
-    for _ in range(len(tarefas) - 1):
-        for tarefa in tarefas:
-            if tarefa not in grafo:  # Ignora tarefas que não têm saídas
+    # Relaxamento das arestas (itera |V|-1 vezes para garantir a convergência)
+    for _ in range(len(materias) - 1):
+        for materia in materias:
+            if materia not in grafo:  # Ignora matérias sem dependências
                 continue
-            for proxima in grafo[tarefa]:
-                if proxima in duracoes:  # Verifica se a próxima tarefa tem duração
-                    if distancias[tarefa] + duracoes[proxima] > distancias[proxima]:
-                        distancias[proxima] = distancias[tarefa] + duracoes[proxima]
-                        predecessores[proxima] = tarefa
+            for proxima in grafo[materia]:  # Para cada matéria dependente da matéria atual
+                if proxima in duracoes:  # Verifica se a próxima matéria tem duração definida
+                    if distancias[materia] + duracoes[proxima] > distancias[proxima]:
+                        distancias[proxima] = distancias[materia] + duracoes[proxima]  # Atualiza a distância máxima
+                        predecessores[proxima] = materia  # Atualiza o predecessor no caminho crítico
 
     # Encontra a maior distância e reconstrói o caminho crítico
     max_dist = float('-inf')
-    tarefa_final = None
+    materia_final = None
 
-    for tarefa, distancia in distancias.items():
+    for materia, distancia in distancias.items():
         if distancia > max_dist:
-            max_dist = distancia
-            tarefa_final = tarefa
+            max_dist = distancia  # Encontra a maior distância (duração do caminho crítico)
+            materia_final = materia  # Encontra a matéria final do projeto
 
-    # Reconstrói o caminho crítico
+    # Reconstrói o caminho crítico a partir da matéria final
     caminho_critico = []
-    while tarefa_final:
-        caminho_critico.append(tarefa_final)
-        tarefa_final = predecessores[tarefa_final]
+    while materia_final:
+        caminho_critico.append(materia_final)
+        materia_final = predecessores[materia_final]
 
-    caminho_critico.reverse()  # Inverte para ter a ordem correta
+    caminho_critico.reverse()  # Inverte para ter a ordem correta (do início ao fim)
     return caminho_critico, max_dist
+
+def exibir_resultado(caminho_critico, nomes, tempo_minimo):
+    """
+    Exibe o resultado do caminho crítico.
+
+    """
+    print("Caminho Crítico:")
+    for materia in caminho_critico:
+        if materia in nomes:  # Imprime apenas matérias com nomes definidos
+            print(f"- {nomes[materia]} ({materia})") 
+    print(f"Tempo Mínimo: {tempo_minimo}")
